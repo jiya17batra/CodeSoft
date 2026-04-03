@@ -1,1 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jiya Batra — Front-End Developer & Designer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
 
+<div class="modal-overlay" id="pdfOverlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 5000; align-items: center; justify-content: center;">
+  <div class="modal-box" style="width: 90vw; height: 85vh; max-width: 1100px; padding: 60px 20px 20px; background: white; position: relative; border-radius: 24px;">
+    <button id="pdfCloseBtn" style="position: absolute; top: 20px; right: 25px; background: #eee; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px; z-index: 10;">✕</button>
+    <div id="pdfViewContainer" style="width: 100%; height: 100%; border-radius: 12px; overflow: hidden; background: #f0f0f0;"></div>
+  </div>
+</div>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <a href="#home" class="logo">JB</a>
+  <ul class="nav-links" id="navLinks">
+    <div class="nav-pill-hover" id="navHover"></div>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#" class="lets-talk-btn" id="openModal">Let's Talk</a></li>
+  </ul>
+  <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="#home">Home</a>
+  <a href="#services">Services</a>
+  <a href="#projects">Projects</a>
+  <a href="#" id="openModalMobile">Let's Talk</a>
+</div>
+
+<section id="home">
+  <div class="hero-container">
+    <div class="hero-text">
+      <div class="hero-label reveal">Hi, I'm</div>
+      <h1 class="hero-name reveal reveal-delay-1">Jiya Batra</h1>
+      <div class="hero-role reveal reveal-delay-2">Front-End Developer & Designer</div>
+      <p class="hero-desc reveal reveal-delay-2">
+        I design and build interactive websites that look stunning and perform flawlessly.
+      </p>
+      <div class="hero-btns reveal reveal-delay-3">
+        <a href="javascript:void(0)" class="btn-pill" id="viewCV">Download "The CV"</a>
+        <a href="javascript:void(0)" class="btn-pill" id="viewAntiCV">Download "The Anti-CV"</a>
+      </div>
+    </div>
+    <div class="hero-image reveal reveal-delay-4">
+      <img src="img.png" alt="Jiya Batra">
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <h2 class="section-title reveal">Services</h2>
+  <div class="carousel-wrapper">
+    <div class="carousel-track" id="carouselTrack">
+      <div class="service-card reveal">
+        <h3>UI/UX Design</h3>
+        <p>Designing clean wireframes and modern user interfaces focused on usability and smooth user experience.</p>
+        <div class="tag-list">
+          <div class="tag">Wireframing</div>
+          <div class="tag">Responsive Layouts</div>
+          <div class="tag">User Research</div>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <h3>Front-End Development</h3>
+        <p>Building responsive, fast, and interactive websites using HTML, CSS, and JavaScript.</p>
+        <div class="tag-list">
+          <div class="tag">Clean HTML/CSS</div>
+          <div class="tag">Responsive Design</div>
+          <div class="tag">Smooth Animations</div>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <h3>Social Media Design</h3>
+        <p>Creating engaging posts, creatives, and brand visuals for digital platforms.</p>
+        <div class="tag-list">
+          <div class="tag">Instagram Creatives</div>
+          <div class="tag">Branding Posts</div>
+          <div class="tag">Canva</div>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <h3>Creative Photography</h3>
+        <p>Capturing aesthetic visuals and product photography for branding and digital content.</p>
+        <div class="tag-list">
+          <div class="tag">Product Shoots</div>
+          <div class="tag">Portrait Photography</div>
+          <div class="tag">Editing</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="carousel-nav">
+    <button class="carousel-btn" id="prevBtn">←</button>
+    <div class="carousel-dots" id="carouselDots">
+      <div class="dot active" data-idx="0"></div>
+      <div class="dot" data-idx="1"></div>
+      <div class="dot" data-idx="2"></div>
+      <div class="dot" data-idx="3"></div>
+    </div>
+    <button class="carousel-btn" id="nextBtn">→</button>
+  </div>
+</section>
+
+<section id="projects">
+  <h2 class="section-title reveal">Projects</h2>
+  <div class="projects-grid">
+    <a href="https://jiya17batra.github.io/Pancha-Mahabhuta/" class="project-pill reveal">
+      <span class="project-num">01</span> Pancha-Mahabhuta
+    </a>
+    <a href="#" class="project-pill reveal reveal-delay-1">
+      <span class="project-num">02</span> Photo-Booth
+    </a>
+    <a href="https://jiya17batra.github.io/Files-of-a-Designer/" class="project-pill reveal reveal-delay-2">
+      <span class="project-num">03</span> Files of a Designer
+    </a>
+    <a href="https://jiya17batra.github.io/ice-cream-palette/" class="project-pill reveal reveal-delay-3">
+      <span class="project-num">04</span> Ice-Cream Palette
+    </a>
+    <a href="#" class="project-pill center-pill reveal reveal-delay-4">
+      <span class="project-num">05</span> Announcement Tracker
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">JB</div>
+      <p style="margin-top:12px; font-size:0.88rem; color:rgba(255,255,255,0.45); max-width:240px; line-height:1.6;">
+        Front-End Developer & Designer based in Hyderabad, India.
+      </p>
+    </div>
+    <div class="map-container">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.4!2d78.4744!3d17.3947!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb99b6c7e50d29%3A0xf6e8ae8f6f8f6f8f!2sHyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin" allowfullscreen="" loading="lazy" title="Location map"></iframe>
+    </div>
+  </div>
+  <div class="footer-copy">
+    <span>© 2026 Jiya Batra. All rights reserved.</span>
+    <span>Designed & built with ♥</span>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-handle" id="modalHandle">
+      <div class="handle-dot"></div><div class="handle-dot"></div><div class="handle-dot"></div>
+    </div>
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-title-big">Let's<br>Talk <span>(via)</span></div>
+    <div class="contact-links">
+      <a href="mailto:jiya17batra@gmail.com" class="contact-btn">Mail <span class="icon">✉</span></a>
+      <a href="https://www.instagram.com/sunsets2suitcases" target="_blank" class="contact-btn">Instagram <span class="icon">↗</span></a>
+      <a href="https://www.linkedin.com/in/jiya17batra/" target="_blank" class="contact-btn">LinkedIn <span class="icon">↗</span></a>
+      <a href="https://github.com/jiya17batra" target="_blank" class="contact-btn">Github <span class="icon">↗</span></a>
+      <a href="https://www.behance.net/jiya17batra" target="_blank" class="contact-btn">Behance <span class="icon">↗</span></a>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
