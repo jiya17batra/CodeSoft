@@ -278,10 +278,11 @@ function handleKey(val) {
   if (val === '=') {
   if (!op) return;
 
-  // 🔊 PLAY SOUND
-  fahSound.currentTime = 1.2;   // restart sound if clicked again quickly
-  fahSound.play().catch(() => {});
-
+ // 🔊 PLAY SOUND (correct)
+fahSound.currentTime = 0;
+fahSound.volume = 1;
+fahSound.play().catch(() => {});
+    
   const sp = prev, sc = cur;
   const res = fmt(compute(prev, cur, op));
   expr.textContent = prev + ' ' + op + ' ' + cur + ' =';
