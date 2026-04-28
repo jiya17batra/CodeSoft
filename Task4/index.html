@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quizzy – Test Your Brain. Build Your Fame.</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#7c3aed;--purple-light:#a78bfa;--yellow:#fbbf24;
+  --pink:#ec4899;--green:#22c55e;--cyan:#06b6d4;
+  --dark:#0f0f14;--dark2:#18181f;--card-bg:#1e1e28;
+  --text:#f1f0ff;--muted:#9ca3af;--hero-circle:#c4b5fd;
+  --radius:16px;
+  --nav-bg:#0f0f14;--modal-bg:#1a1a24;--input-bg:#0f0f14;
+}
+body.light-mode{
+  --dark:#f5f4ff;--dark2:#ede9fe;--card-bg:#fff;
+  --text:#111;--muted:#6b7280;--hero-circle:#c4b5fd;
+  --nav-bg:#fff;--modal-bg:#fff;--input-bg:#f5f4ff;
+}
+body.light-mode nav{border-bottom:1px solid rgba(0,0,0,.08)}
+body.light-mode .quiz-modal,body.light-mode .name-modal{background:#fff;border-color:rgba(0,0,0,.1)}
+body.light-mode .quiz-card{border-color:rgba(0,0,0,.08);box-shadow:0 2px 12px rgba(0,0,0,.06)}
+body.light-mode .option-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.1);color:#111}
+body.light-mode .name-input{background:#f5f4ff;border-color:rgba(0,0,0,.15);color:#111}
+body.light-mode .modal-btn.ghost{background:rgba(0,0,0,.06);color:#555}
+body.light-mode .quiz-header,.body.light-mode .quiz-footer{border-color:rgba(0,0,0,.08)}
+body.light-mode .close-btn{background:rgba(0,0,0,.06);color:#555}
+body.light-mode .progress-bar-track{background:rgba(0,0,0,.08)}
+body.light-mode .user-pill{background:rgba(0,0,0,.06)}
+body.light-mode .nav-links a{color:#555}
+body.light-mode .nav-links a.active{color:#fff}
+body.light-mode .result-btn.ghost{color:#111}
+
+/* SEARCH BAR */
+.search-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);z-index:300;display:flex;align-items:flex-start;justify-content:center;padding:80px 20px 20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.search-overlay.open{opacity:1;pointer-events:all}
+.search-box{background:#1a1a24;border-radius:16px;padding:20px;width:100%;max-width:560px;border:1px solid rgba(255,255,255,.1)}
+body.light-mode .search-box{background:#fff;border-color:rgba(0,0,0,.1)}
+.search-input-wrap{display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:16px;margin-bottom:16px}
+body.light-mode .search-input-wrap{border-bottom-color:rgba(0,0,0,.08)}
+.search-input-wrap span{font-size:20px}
+.search-input{flex:1;background:none;border:none;outline:none;font-size:17px;font-weight:600;color:var(--text);font-family:'Poppins',sans-serif}
+.search-input::placeholder{color:var(--muted)}
+.search-results{display:flex;flex-direction:column;gap:8px}
+.search-result-item{padding:12px 14px;border-radius:10px;background:rgba(255,255,255,.05);cursor:pointer;font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:10px;transition:background .15s}
+body.light-mode .search-result-item{background:rgba(0,0,0,.04)}
+.search-result-item:hover{background:rgba(124,58,237,.18)}
+.search-no-results{color:var(--muted);font-size:14px;text-align:center;padding:16px 0}
+.search-close{float:right;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1}
+
+/* CREATE QUIZ MODAL */
+.create-modal{background:#1a1a24;border-radius:24px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border:1px solid rgba(255,255,255,.08);transform:scale(.92);transition:transform .25s;padding:32px}
+body.light-mode .create-modal{background:#fff;border-color:rgba(0,0,0,.1)}
+.overlay.open .create-modal{transform:scale(1)}
+.create-modal h2{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.form-group{margin-bottom:18px}
+.form-label{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;display:block}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--input-bg);border:2px solid rgba(255,255,255,.1);border-radius:12px;padding:13px 16px;font-size:14px;font-weight:600;color:var(--text);font-family:'Poppins',sans-serif;outline:none;transition:border-color .2s}
+body.light-mode .form-input,body.light-mode .form-select,body.light-mode .form-textarea{border-color:rgba(0,0,0,.15)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--purple)}
+.form-select{appearance:none;cursor:pointer}
+.form-textarea{resize:vertical;min-height:90px}
+.questions-builder{margin-top:8px}
+.q-item{background:rgba(255,255,255,.04);border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid rgba(255,255,255,.06)}
+body.light-mode .q-item{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.06)}
+.q-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.q-num-badge{font-size:11px;font-weight:800;color:var(--purple-light);letter-spacing:.06em}
+.q-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;transition:color .2s}
+.q-remove:hover{color:#ef4444}
+.opt-input-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.opt-radio{accent-color:var(--purple);cursor:pointer;width:16px;height:16px;flex-shrink:0}
+.opt-input{flex:1;background:var(--input-bg);border:1.5px solid rgba(255,255,255,.08);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);font-family:'Poppins',sans-serif;outline:none;transition:border-color .2s}
+body.light-mode .opt-input{border-color:rgba(0,0,0,.1)}
+.opt-input:focus{border-color:var(--purple)}
+.add-q-btn{display:flex;align-items:center;gap:8px;background:rgba(124,58,237,.12);border:1.5px dashed rgba(124,58,237,.35);border-radius:12px;padding:12px;width:100%;color:var(--purple-light);font-size:14px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;justify-content:center;transition:all .2s;margin-top:4px}
+.add-q-btn:hover{background:rgba(124,58,237,.2);border-color:var(--purple)}
+.create-actions{display:flex;gap:12px;margin-top:24px}
+.create-hint{font-size:11px;color:var(--muted);margin-top:6px}
+
+/* LEADERBOARD / MY QUIZZES / CATEGORIES inside overlay */
+.info-modal{background:#1a1a24;border-radius:20px;padding:32px;width:100%;max-width:480px;border:1px solid rgba(255,255,255,.08);transform:scale(.92);transition:transform .25s;max-height:85vh;overflow-y:auto}
+body.light-mode .info-modal{background:#fff;border-color:rgba(0,0,0,.1)}
+.overlay.open .info-modal{transform:scale(1)}
+.info-modal h2{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.lb-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+body.light-mode .lb-row{border-bottom-color:rgba(0,0,0,.06)}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{font-size:18px;width:32px;text-align:center;flex-shrink:0}
+.lb-name{flex:1;font-size:14px;font-weight:700}
+.lb-score{font-size:13px;font-weight:700;color:var(--yellow)}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cat-item{background:rgba(255,255,255,.05);border-radius:14px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s;border:1.5px solid rgba(255,255,255,.06);font-size:28px}
+body.light-mode .cat-item{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.07)}
+.cat-item:hover{background:rgba(124,58,237,.15);border-color:var(--purple);transform:scale(1.04)}
+.cat-item p{font-size:13px;font-weight:700;margin-top:8px;color:var(--text)}
+.my-quiz-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+body.light-mode .my-quiz-row{border-bottom-color:rgba(0,0,0,.06)}
+.my-quiz-row:last-child{border-bottom:none}
+.my-quiz-name{font-size:14px;font-weight:700}
+.my-quiz-meta{font-size:12px;color:var(--muted);margin-top:2px}
+body{font-family:'Poppins',sans-serif;background:var(--dark);color:var(--text);min-height:100vh}
+
+/* NAV */
+nav{background:var(--nav-bg);display:flex;align-items:center;padding:0 40px;height:64px;gap:40px;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,.05);transition:background .3s}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;color:var(--text);text-decoration:none;flex-shrink:0}
+.logo-icon{width:38px;height:38px;background:var(--purple);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;position:relative}
+.logo-icon::after{content:'✦';position:absolute;top:-5px;right:-5px;font-size:10px;color:var(--yellow)}
+.nav-links{display:flex;gap:8px;list-style:none;flex:1;justify-content:center}
+.nav-links a{text-decoration:none;color:var(--muted);font-size:14px;font-weight:500;padding:8px 18px;border-radius:50px;transition:all .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{background:var(--purple);color:#fff}
+.nav-right{display:flex;align-items:center;gap:18px;flex-shrink:0}
+.nav-icon-btn{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;transition:color .2s;display:flex;align-items:center}
+.nav-icon-btn:hover{color:var(--text)}
+.user-pill{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border-radius:50px;padding:5px 14px 5px 5px;cursor:pointer;transition:background .2s}
+.user-pill:hover{background:rgba(255,255,255,.1)}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ec4899);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff}
+.user-name-display{font-size:14px;font-weight:600;color:var(--text)}
+.chevron{color:var(--muted);font-size:12px}
+
+/* HERO */
+.hero{margin:24px 24px 0;background:linear-gradient(135deg,#ede9fe 0%,#f5f0ff 50%,#fdf4ff 100%);border-radius:24px;padding:56px 60px;display:flex;align-items:center;min-height:340px;position:relative;overflow:hidden}
+.hero-content{flex:1;z-index:2;max-width:520px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;border:1.5px solid #c4b5fd;border-radius:50px;padding:6px 18px;font-size:12px;font-weight:700;color:#6d28d9;letter-spacing:.08em;margin-bottom:24px;background:rgba(255,255,255,.6)}
+.hero-title{font-family:'Nunito',sans-serif;font-size:clamp(38px,5vw,56px);font-weight:900;line-height:1.1;color:#111;margin-bottom:6px}
+.hero-title span{color:var(--purple);position:relative;display:inline-block}
+.hero-title span::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:5px;background:var(--yellow);border-radius:3px;transform:skew(-3deg)}
+.hero-sub{font-size:14px;color:#555;margin:18px 0 28px;line-height:1.6}
+.hero-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--purple);color:#fff;border:none;border-radius:50px;padding:14px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 20px rgba(124,58,237,.4)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,.5)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#111;border:1.5px solid #ddd;border-radius:50px;padding:14px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;transition:transform .15s,box-shadow .15s}
+.btn-secondary:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.social-proof{display:flex;align-items:center;gap:12px;margin-top:24px;font-size:13px;color:#555;font-weight:500}
+.avatars-row{display:flex}
+.mini-av{width:30px;height:30px;border-radius:50%;border:2px solid #fff;margin-left:-8px;background:linear-gradient(135deg,#f59e0b,#ec4899);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.mini-av:first-child{margin-left:0}
+.mini-av:nth-child(2){background:linear-gradient(135deg,#06b6d4,#6d28d9)}
+.mini-av:nth-child(3){background:linear-gradient(135deg,#22c55e,#fbbf24)}
+.hero-visual{flex:1;display:flex;justify-content:center;align-items:center;position:relative;min-height:280px}
+.hero-circle{width:260px;height:260px;border-radius:50%;background:var(--hero-circle);position:absolute;right:60px;top:50%;transform:translateY(-50%)}
+.hero-character{width:280px;position:relative;z-index:2;right:40px;top:10px;font-size:160px;text-align:center;line-height:1;filter:drop-shadow(0 20px 40px rgba(124,58,237,.3));user-select:none}
+.float-badge{position:absolute;background:#fff;border-radius:12px;padding:8px 14px;font-size:13px;font-weight:600;color:#222;box-shadow:0 4px 20px rgba(0,0,0,.12);white-space:nowrap;display:flex;align-items:center;gap:6px;z-index:3}
+.float-badge.b1{top:18%;right:10%}.float-badge.b2{bottom:18%;left:20%}
+.doodle{position:absolute;font-size:26px;z-index:1;pointer-events:none}
+.doodle.star{top:35%;left:45%;color:var(--yellow)}.doodle.crown{top:12%;right:5%;font-size:28px}.doodle.bulb{bottom:20%;right:4%;font-size:30px}
+
+/* FEATURED */
+.featured{padding:40px 40px 60px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.section-title{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:10px}
+.view-all{font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:4px;transition:color .2s}
+.view-all:hover{color:var(--purple-light)}
+.cards-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:18px}
+@media(max-width:1200px){.cards-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){.cards-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.cards-grid{grid-template-columns:1fr}}
+.quiz-card{background:var(--card-bg);border-radius:var(--radius);overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:pointer;border:1px solid rgba(255,255,255,.05)}
+.quiz-card:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.card-thumb{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:72px;position:relative}
+.card-thumb.science{background:linear-gradient(135deg,#7c3aed,#a855f7)}
+.card-thumb.entertain{background:linear-gradient(135deg,#f59e0b,#ef4444)}
+.card-thumb.tech{background:linear-gradient(135deg,#06b6d4,#3b82f6)}
+.card-thumb.geo{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.card-thumb.random{background:linear-gradient(135deg,#ec4899,#f43f5e)}
+.card-category-tag{position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:600;color:#fff}
+.card-body{padding:16px}
+.card-title{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--text);margin-bottom:8px}
+.card-meta{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:16px;font-weight:500}
+.btn-start{width:100%;background:var(--purple);color:#fff;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s,transform .15s}
+.btn-start:hover{background:#6d28d9;transform:scale(1.02)}
+
+/* ANIMATIONS */
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.hero-character{animation:float 3.5s ease-in-out infinite}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.hero-content{animation:fadeUp .6s ease both}.hero-visual{animation:fadeUp .6s .15s ease both}
+.quiz-card{animation:fadeUp .5s ease both}
+.quiz-card:nth-child(1){animation-delay:.05s}.quiz-card:nth-child(2){animation-delay:.1s}
+.quiz-card:nth-child(3){animation-delay:.15s}.quiz-card:nth-child(4){animation-delay:.2s}.quiz-card:nth-child(5){animation-delay:.25s}
+@media(max-width:900px){nav{padding:0 20px;gap:20px}.nav-links{display:none}.hero{margin:12px 12px 0;padding:36px 28px;flex-direction:column;gap:24px}.hero-visual{display:none}.featured{padding:28px 16px 40px}}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.overlay.open{opacity:1;pointer-events:all}
+
+/* NAME MODAL */
+.name-modal{background:#1a1a24;border-radius:20px;padding:40px;width:100%;max-width:420px;text-align:center;transform:scale(.92);transition:transform .25s;border:1px solid rgba(255,255,255,.08)}
+.overlay.open .name-modal,.overlay.open .quiz-modal{transform:scale(1)}
+.name-modal h2{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;margin-bottom:8px}
+.name-modal p{color:var(--muted);font-size:14px;margin-bottom:28px}
+.name-input{width:100%;background:#0f0f14;border:2px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 18px;font-size:16px;font-weight:600;color:var(--text);font-family:'Poppins',sans-serif;outline:none;transition:border-color .2s;margin-bottom:20px}
+.name-input:focus{border-color:var(--purple)}
+.modal-btn-row{display:flex;gap:12px;justify-content:center}
+.modal-btn{padding:12px 28px;border-radius:50px;border:none;font-size:14px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:all .2s}
+.modal-btn.primary{background:var(--purple);color:#fff;box-shadow:0 4px 16px rgba(124,58,237,.35)}
+.modal-btn.primary:hover{background:#6d28d9;transform:translateY(-1px)}
+.modal-btn.ghost{background:rgba(255,255,255,.07);color:var(--muted)}
+.modal-btn.ghost:hover{background:rgba(255,255,255,.12);color:var(--text)}
+
+/* QUIZ MODAL */
+.quiz-modal{background:#1a1a24;border-radius:24px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;border:1px solid rgba(255,255,255,.08);transform:scale(.92);transition:transform .25s;display:flex;flex-direction:column}
+.quiz-header{padding:24px 28px 18px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.quiz-header-info h3{font-family:'Nunito',sans-serif;font-size:19px;font-weight:900}
+.quiz-header-info p{font-size:12px;color:var(--muted);margin-top:3px}
+.close-btn{background:rgba(255,255,255,.08);border:none;color:var(--muted);width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.close-btn:hover{background:rgba(255,255,255,.15);color:var(--text)}
+.quiz-progress-wrap{padding:16px 28px 0;flex-shrink:0}
+.progress-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600}
+.progress-bar-track{height:6px;background:rgba(255,255,255,.08);border-radius:6px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--purple-light));border-radius:6px;transition:width .45s ease}
+.quiz-body{padding:24px 28px;flex:1}
+.q-number{font-size:11px;font-weight:700;color:var(--purple-light);letter-spacing:.08em;margin-bottom:10px;text-transform:uppercase}
+.q-text{font-family:'Nunito',sans-serif;font-size:19px;font-weight:800;line-height:1.45;margin-bottom:22px;color:var(--text)}
+.options-grid{display:flex;flex-direction:column;gap:11px}
+.option-btn{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:15px 18px;text-align:left;font-size:14px;font-weight:600;color:var(--text);cursor:pointer;font-family:'Poppins',sans-serif;transition:all .2s;display:flex;align-items:center;gap:14px;width:100%}
+.option-btn:hover:not([disabled]){background:rgba(124,58,237,.15);border-color:var(--purple-light);transform:translateX(4px)}
+.opt-label{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;transition:all .2s}
+.option-btn.correct{background:rgba(34,197,94,.12);border-color:#22c55e;color:#4ade80}
+.option-btn.correct .opt-label{background:#22c55e;color:#fff}
+.option-btn.wrong{background:rgba(239,68,68,.1);border-color:#ef4444;color:#f87171}
+.option-btn.wrong .opt-label{background:#ef4444;color:#fff}
+.option-btn[disabled]{cursor:default;opacity:.55}
+.option-btn.correct[disabled],.option-btn.wrong[disabled]{opacity:1}
+.feedback-banner{margin-top:18px;border-radius:12px;padding:13px 16px;font-size:13px;font-weight:600;display:none;align-items:center;gap:10px}
+.feedback-banner.show{display:flex}
+.feedback-banner.correct-fb{background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.25)}
+.feedback-banner.wrong-fb{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+.quiz-footer{padding:18px 28px 24px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.score-chip{font-size:13px;font-weight:700;color:var(--muted)}
+.score-chip span{color:var(--yellow)}
+.next-btn{background:var(--purple);color:#fff;border:none;border-radius:50px;padding:12px 26px;font-size:14px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(124,58,237,.35);display:none}
+.next-btn.visible{display:block}
+.next-btn:hover{background:#6d28d9;transform:translateY(-1px)}
+
+/* RESULTS */
+.results-body{padding:36px 28px;text-align:center}
+.result-emoji{font-size:68px;margin-bottom:14px;display:block;animation:float 2.5s ease-in-out infinite}
+.results-body h2{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;margin-bottom:6px}
+.result-sub{color:var(--muted);font-size:14px;margin-bottom:24px}
+.score-big{font-size:52px;font-weight:900;font-family:'Nunito',sans-serif;color:var(--purple-light);margin-bottom:4px}
+.score-label{color:var(--muted);font-size:13px;font-weight:600;margin-bottom:28px}
+.result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.result-btn{padding:13px 24px;border-radius:50px;border:none;font-size:14px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:all .2s}
+.result-btn.primary{background:var(--purple);color:#fff;box-shadow:0 4px 16px rgba(124,58,237,.35)}
+.result-btn.primary:hover{background:#6d28d9;transform:translateY(-1px)}
+.result-btn.ghost{background:rgba(255,255,255,.07);color:var(--text)}
+.result-btn.ghost:hover{background:rgba(255,255,255,.12)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo"><div class="logo-icon">⚡</div>Quizzy</a>
+  <ul class="nav-links">
+    <li><a href="#" class="active" onclick="navClick(this,'home');return false">Home</a></li>
+    <li><a href="#" onclick="navClick(this,'quizzes');return false">Quizzes</a></li>
+    <li><a href="#" onclick="navClick(this,'myquizzes');return false">My Quizzes</a></li>
+    <li><a href="#" onclick="navClick(this,'leaderboard');return false">Leaderboard</a></li>
+    <li><a href="#" onclick="navClick(this,'categories');return false">Categories</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-icon-btn" onclick="openSearch()" title="Search">🔍</button>
+    <button class="nav-icon-btn" id="dark-toggle" onclick="toggleDark()" title="Toggle dark/light mode">🌙</button>
+    <div class="user-pill" onclick="openNameModal()" title="Click to change name">
+      <div class="avatar" id="nav-avatar">A</div>
+      <span class="user-name-display" id="nav-name">Hey, Alex</span>
+      <span class="chevron">✏️</span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">LEARN. PLAY. GROW. 🚀</div>
+    <h1 class="hero-title">Test your brain.<br><span>Build your fame.</span></h1>
+    <p class="hero-sub">Create awesome quizzes, challenge your friends,<br>and become the ultimate quiz champion! 🏆</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="openCreateQuiz()">➕ Create Quiz</button>
+      <button class="btn-secondary" onclick="scrollToQuizzes()">▶ Take Quiz</button>
+    </div>
+    <div class="social-proof">
+      <div class="avatars-row">
+        <div class="mini-av">A</div><div class="mini-av">B</div><div class="mini-av">C</div>
+      </div>
+      Join 10K+ quiz lovers 💜
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-circle"></div>
+    <div class="hero-character">🧑‍💻</div>
+    <div class="float-badge b1">Stay curious 😎</div>
+    <div class="float-badge b2">🧠 Brains &gt; Scrolls</div>
+    <div class="doodle star">⭐</div>
+    <div class="doodle crown">👑</div>
+    <div class="doodle bulb">💡</div>
+  </div>
+</section>
+
+<!-- FEATURED -->
+<section class="featured">
+  <div class="section-header">
+    <h2 class="section-title">🔥 Featured Quizzes</h2>
+    <a href="#" class="view-all" onclick="navClick(null,'quizzes');return false">View all →</a>
+  </div>
+  <div class="cards-grid">
+
+    <div class="quiz-card" onclick="startQuiz('science')">
+      <div class="card-thumb science">🧠<span class="card-category-tag">Science</span></div>
+      <div class="card-body">
+        <div class="card-title">The Human Body ❤️</div>
+        <div class="card-meta"><span>4 Questions</span><span>👥 1.2K</span></div>
+        <button class="btn-start" onclick="event.stopPropagation();startQuiz('science')">▶ Start Quiz</button>
+      </div>
+    </div>
+
+    <div class="quiz-card" onclick="startQuiz('entertainment')">
+      <div class="card-thumb entertain">📺<span class="card-category-tag">Entertainment</span></div>
+      <div class="card-body">
+        <div class="card-title">90s Pop Culture 😎</div>
+        <div class="card-meta"><span>4 Questions</span><span>👥 2.5K</span></div>
+        <button class="btn-start" onclick="event.stopPropagation();startQuiz('entertainment')">▶ Start Quiz</button>
+      </div>
+    </div>
+
+    <div class="quiz-card" onclick="startQuiz('tech')">
+      <div class="card-thumb tech">💻<span class="card-category-tag">Technology</span></div>
+      <div class="card-body">
+        <div class="card-title">Web Dev Basics 🖥️</div>
+        <div class="card-meta"><span>4 Questions</span><span>👥 1.8K</span></div>
+        <button class="btn-start" onclick="event.stopPropagation();startQuiz('tech')">▶ Start Quiz</button>
+      </div>
+    </div>
+
+    <div class="quiz-card" onclick="startQuiz('geography')">
+      <div class="card-thumb geo">🌍<span class="card-category-tag">Geography</span></div>
+      <div class="card-body">
+        <div class="card-title">World Capitals 🌐</div>
+        <div class="card-meta"><span>4 Questions</span><span>👥 1.1K</span></div>
+        <button class="btn-start" onclick="event.stopPropagation();startQuiz('geography')">▶ Start Quiz</button>
+      </div>
+    </div>
+
+    <div class="quiz-card" onclick="startQuiz('mixed')">
+      <div class="card-thumb random">❓<span class="card-category-tag">Random</span></div>
+      <div class="card-body">
+        <div class="card-title">Mixed Bag 🤔</div>
+        <div class="card-meta"><span>4 Questions</span><span>👥 3.3K</span></div>
+        <button class="btn-start" onclick="event.stopPropagation();startQuiz('mixed')">▶ Start Quiz</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- NAME MODAL -->
+<div class="overlay" id="name-overlay">
+  <div class="name-modal">
+    <div style="font-size:48px;margin-bottom:12px">✏️</div>
+    <h2>Change Your Name</h2>
+    <p>Personalize your Quizzy experience</p>
+    <input class="name-input" id="name-input" type="text" placeholder="Enter your name…" maxlength="20" onkeydown="if(event.key==='Enter')saveName()"/>
+    <div class="modal-btn-row">
+      <button class="modal-btn ghost" onclick="closeNameModal()">Cancel</button>
+      <button class="modal-btn primary" onclick="saveName()">Save ✨</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ MODAL -->
+<div class="overlay" id="quiz-overlay">
+  <div class="quiz-modal">
+
+    <!-- Question view -->
+    <div id="quiz-question-view">
+      <div class="quiz-header">
+        <div class="quiz-header-info">
+          <h3 id="quiz-title">Quiz</h3>
+          <p id="quiz-subtitle">4 Questions</p>
+        </div>
+        <button class="close-btn" onclick="closeQuiz()">✕</button>
+      </div>
+      <div class="quiz-progress-wrap">
+        <div class="progress-labels">
+          <span id="prog-label">Question 1 of 4</span>
+          <span id="prog-pct">0%</span>
+        </div>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+      <div class="quiz-body">
+        <div class="q-number" id="q-number">QUESTION 1</div>
+        <div class="q-text" id="q-text"></div>
+        <div class="options-grid" id="options-grid"></div>
+        <div class="feedback-banner" id="feedback-banner"></div>
+      </div>
+      <div class="quiz-footer">
+        <div class="score-chip">Score: <span id="score-display">0</span> / <span id="score-total">4</span></div>
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+    </div>
+
+    <!-- Results view -->
+    <div id="quiz-results-view" style="display:none">
+      <div class="quiz-header">
+        <div class="quiz-header-info"><h3>Quiz Complete! 🎉</h3><p id="results-quiz-name"></p></div>
+        <button class="close-btn" onclick="closeQuiz()">✕</button>
+      </div>
+      <div class="results-body">
+        <span class="result-emoji" id="result-emoji">🏆</span>
+        <h2 id="result-heading">Amazing!</h2>
+        <p class="result-sub" id="result-sub"></p>
+        <div class="score-big" id="result-score">4/4</div>
+        <div class="score-label" id="result-pct">100% correct</div>
+        <div class="result-actions">
+          <button class="result-btn ghost" onclick="closeQuiz()">🏠 Home</button>
+          <button class="result-btn primary" onclick="retryQuiz()">🔁 Try Again</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" id="search-overlay" onclick="if(event.target===this)closeSearch()">
+  <div class="search-box">
+    <div class="search-input-wrap">
+      <span>🔍</span>
+      <input class="search-input" id="search-input" type="text" placeholder="Search quizzes…" oninput="renderSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearch()"/>
+      <button class="search-close" onclick="closeSearch()">✕</button>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<!-- CREATE QUIZ OVERLAY -->
+<div class="overlay" id="create-overlay">
+  <div class="create-modal">
+    <h2>➕ Create a Quiz</h2>
+    <div class="form-group">
+      <label class="form-label">Quiz Title</label>
+      <input class="form-input" id="cq-title" type="text" placeholder="e.g. World History Trivia" maxlength="60"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Category</label>
+      <select class="form-select" id="cq-category">
+        <option value="science">Science</option>
+        <option value="tech">Technology</option>
+        <option value="entertainment">Entertainment</option>
+        <option value="geography">Geography</option>
+        <option value="mixed">Mixed / Random</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Questions</label>
+      <div class="questions-builder" id="cq-questions"></div>
+      <button class="add-q-btn" onclick="addCreateQuestion()">➕ Add Question</button>
+    </div>
+    <div class="create-actions">
+      <button class="modal-btn ghost" onclick="closeCreateQuiz()">Cancel</button>
+      <button class="modal-btn primary" onclick="publishQuiz()">🚀 Publish Quiz</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD OVERLAY -->
+<div class="overlay" id="lb-overlay">
+  <div class="info-modal">
+    <h2>🏆 Leaderboard</h2>
+    <div id="lb-list"></div>
+    <div style="margin-top:20px;text-align:right"><button class="modal-btn ghost" onclick="closeModal('lb-overlay')">Close</button></div>
+  </div>
+</div>
+
+<!-- MY QUIZZES OVERLAY -->
+<div class="overlay" id="myq-overlay">
+  <div class="info-modal">
+    <h2>📋 My Quizzes</h2>
+    <div id="myq-list"></div>
+    <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end">
+      <button class="modal-btn primary" onclick="closeModal('myq-overlay');openCreateQuiz()">➕ Create New</button>
+      <button class="modal-btn ghost" onclick="closeModal('myq-overlay')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIES OVERLAY -->
+<div class="overlay" id="cat-overlay">
+  <div class="info-modal">
+    <h2>🗂️ Categories</h2>
+    <div class="cat-grid">
+      <div class="cat-item" onclick="closeModal('cat-overlay');startQuiz('science')">🧠<p>Science</p></div>
+      <div class="cat-item" onclick="closeModal('cat-overlay');startQuiz('entertainment')">📺<p>Entertainment</p></div>
+      <div class="cat-item" onclick="closeModal('cat-overlay');startQuiz('tech')">💻<p>Technology</p></div>
+      <div class="cat-item" onclick="closeModal('cat-overlay');startQuiz('geography')">🌍<p>Geography</p></div>
+      <div class="cat-item" onclick="closeModal('cat-overlay');startQuiz('mixed')">❓<p>Mixed Bag</p></div>
+      <div class="cat-item" onclick="closeModal('cat-overlay');openCreateQuiz()">➕<p>Create Own</p></div>
+    </div>
+    <div style="margin-top:20px;text-align:right"><button class="modal-btn ghost" onclick="closeModal('cat-overlay')">Close</button></div>
+  </div>
+</div>
+
+<script>
+const QUIZZES = {
+  science:{
+    title:'The Human Body ❤️',
+    questions:[
+      {q:'What is the largest organ in the human body?',opts:['Brain','Liver','Skin','Heart'],ans:2},
+      {q:'How many bones does an adult human body have?',opts:['186','206','226','256'],ans:1},
+      {q:'Which blood type is known as the universal donor?',opts:['A+','B−','O−','AB+'],ans:2},
+      {q:'What part of the brain controls balance and coordination?',opts:['Cerebrum','Cerebellum','Medulla','Thalamus'],ans:1}
+    ]
+  },
+  entertainment:{
+    title:'90s Pop Culture 😎',
+    questions:[
+      {q:'Which 90s sitcom featured friends living in New York City?',opts:['Seinfeld','Friends','Frasier','Cheers'],ans:1},
+      {q:'Which artist released the iconic album "Thriller"?',opts:['Prince','Madonna','Michael Jackson','Whitney Houston'],ans:2},
+      {q:'What was the best-selling video game console of the 90s?',opts:['Sega Genesis','Super Nintendo','PlayStation','Nintendo 64'],ans:2},
+      {q:'Which film featured the line "You had me at hello"?',opts:['Sleepless in Seattle','Jerry Maguire','Pretty Woman','Notting Hill'],ans:1}
+    ]
+  },
+  tech:{
+    title:'Web Dev Basics 🖥️',
+    questions:[
+      {q:'What does CSS stand for?',opts:['Computer Style Sheets','Cascading Style Sheets','Creative Style System','Colorful Styling Sheets'],ans:1},
+      {q:'Which HTML tag is used to create a hyperlink?',opts:['<link>','<href>','<a>','<url>'],ans:2},
+      {q:'What does "DOM" stand for in web development?',opts:['Document Object Model','Data Object Module','Dynamic Object Map','Design Output Method'],ans:0},
+      {q:'Which JavaScript method adds an element to the end of an array?',opts:['push()','pop()','shift()','append()'],ans:0}
+    ]
+  },
+  geography:{
+    title:'World Capitals 🌐',
+    questions:[
+      {q:'What is the capital city of Australia?',opts:['Sydney','Melbourne','Brisbane','Canberra'],ans:3},
+      {q:'Which city is the capital of Canada?',opts:['Toronto','Vancouver','Ottawa','Montreal'],ans:2},
+      {q:'What is the capital of Brazil?',opts:['São Paulo','Rio de Janeiro','Brasília','Salvador'],ans:2},
+      {q:'Which city is the executive capital of South Africa?',opts:['Cape Town','Johannesburg','Pretoria','Durban'],ans:2}
+    ]
+  },
+  mixed:{
+    title:'Mixed Bag 🤔',
+    questions:[
+      {q:'How many sides does a hexagon have?',opts:['5','6','7','8'],ans:1},
+      {q:'Which planet is known as the Red Planet?',opts:['Venus','Jupiter','Mars','Saturn'],ans:2},
+      {q:'What is the chemical symbol for Gold?',opts:['Go','Gd','Au','Ag'],ans:2},
+      {q:'Who painted the Mona Lisa?',opts:['Michelangelo','Raphael','Leonardo da Vinci','Donatello'],ans:2}
+    ]
+  }
+};
+
+let userName='Alex', currentQuiz=null, currentQ=0, score=0, answered=false;
+
+/* NAME */
+function openNameModal(){
+  document.getElementById('name-input').value=userName==='Alex'?'':userName;
+  document.getElementById('name-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('name-input').focus(),200);
+}
+function closeNameModal(){document.getElementById('name-overlay').classList.remove('open')}
+function saveName(){
+  const v=document.getElementById('name-input').value.trim();
+  if(!v)return;
+  userName=v;
+  document.getElementById('nav-name').textContent='Hey, '+userName;
+  document.getElementById('nav-avatar').textContent=userName[0].toUpperCase();
+  closeNameModal();
+}
+
+/* QUIZ */
+function startQuiz(key){
+  currentQuiz=key; currentQ=0; score=0; answered=false;
+  const quiz=QUIZZES[key];
+  document.getElementById('quiz-title').textContent=quiz.title;
+  document.getElementById('quiz-subtitle').textContent=quiz.questions.length+' Questions';
+  document.getElementById('score-total').textContent=quiz.questions.length;
+  document.getElementById('results-quiz-name').textContent=quiz.title;
+  document.getElementById('quiz-question-view').style.display='block';
+  document.getElementById('quiz-results-view').style.display='none';
+  renderQuestion();
+  document.getElementById('quiz-overlay').classList.add('open');
+}
+
+function renderQuestion(){
+  const quiz=QUIZZES[currentQuiz], q=quiz.questions[currentQ], total=quiz.questions.length;
+  answered=false;
+  const pct=Math.round((currentQ/total)*100);
+  document.getElementById('prog-label').textContent='Question '+(currentQ+1)+' of '+total;
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('q-number').textContent='QUESTION '+(currentQ+1);
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('score-display').textContent=score;
+  const labels=['A','B','C','D'];
+  const grid=document.getElementById('options-grid');
+  grid.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.innerHTML='<span class="opt-label">'+labels[i]+'</span>'+opt;
+    btn.onclick=()=>selectAnswer(i,q.ans);
+    grid.appendChild(btn);
+  });
+  const fb=document.getElementById('feedback-banner');
+  fb.className='feedback-banner';fb.innerHTML='';
+  document.getElementById('next-btn').classList.remove('visible');
+}
+
+function selectAnswer(chosen,correct){
+  if(answered)return;
+  answered=true;
+  const btns=document.querySelectorAll('.option-btn');
+  btns.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('feedback-banner');
+  if(chosen===correct){
+    score++;
+    btns[chosen].classList.add('correct');
+    fb.className='feedback-banner correct-fb show';
+    fb.innerHTML='✅ Correct! Well done, <strong>'+userName+'</strong>!';
+  } else {
+    btns[chosen].classList.add('wrong');
+    btns[correct].classList.add('correct');
+    fb.className='feedback-banner wrong-fb show';
+    fb.innerHTML='❌ Oops! Correct answer: <strong style="margin-left:4px">'+QUIZZES[currentQuiz].questions[currentQ].opts[correct]+'</strong>';
+  }
+  document.getElementById('score-display').textContent=score;
+  const total=QUIZZES[currentQuiz].questions.length;
+  const nb=document.getElementById('next-btn');
+  nb.textContent=currentQ+1>=total?'🏁 See Results':'Next →';
+  nb.classList.add('visible');
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ>=QUIZZES[currentQuiz].questions.length) showResults();
+  else renderQuestion();
+}
+
+function showResults(){
+  document.getElementById('quiz-question-view').style.display='none';
+  document.getElementById('quiz-results-view').style.display='block';
+  const total=QUIZZES[currentQuiz].questions.length;
+  const pct=Math.round((score/total)*100);
+  document.getElementById('result-score').textContent=score+'/'+total;
+  document.getElementById('result-pct').textContent=pct+'% correct';
+  let emoji,heading,sub;
+  if(pct===100){emoji='🏆';heading='Perfect Score!';sub='Absolutely nailed it, '+userName+'! 🎉'}
+  else if(pct>=75){emoji='🌟';heading='Amazing Work!';sub='You\'re on fire, '+userName+'!'}
+  else if(pct>=50){emoji='👍';heading='Good Job!';sub='Solid effort, '+userName+'! Keep practising.'}
+  else{emoji='💪';heading='Keep Going!';sub='Don\'t give up, '+userName+'! Try again!'}
+  document.getElementById('result-emoji').textContent=emoji;
+  document.getElementById('result-heading').textContent=heading;
+  document.getElementById('result-sub').textContent=sub;
+}
+
+function retryQuiz(){startQuiz(currentQuiz)}
+function closeQuiz(){document.getElementById('quiz-overlay').classList.remove('open')}
+
+document.getElementById('quiz-overlay').addEventListener('click',function(e){if(e.target===this)closeQuiz()});
+document.getElementById('name-overlay').addEventListener('click',function(e){if(e.target===this)closeNameModal()});
+document.getElementById('create-overlay').addEventListener('click',function(e){if(e.target===this)closeCreateQuiz()});
+
+/* ── DARK MODE ── */
+function toggleDark(){
+  const isLight=document.body.classList.toggle('light-mode');
+  document.getElementById('dark-toggle').textContent=isLight?'☀️':'🌙';
+}
+
+/* ── SCROLL TO QUIZZES ── */
+function scrollToQuizzes(){
+  document.querySelector('.featured').scrollIntoView({behavior:'smooth'});
+}
+
+/* ── NAV ── */
+function navClick(el, page){
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  if(el) el.classList.add('active');
+  if(page==='leaderboard') openLeaderboard();
+  else if(page==='myquizzes') openMyQuizzes();
+  else if(page==='categories') openCategories();
+  else if(page==='quizzes') scrollToQuizzes();
+}
+
+/* ── GENERIC MODAL CLOSE ── */
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+/* ── SEARCH ── */
+const ALL_QUIZZES_LIST=[
+  {key:'science',label:'The Human Body ❤️',icon:'🧠',cat:'Science'},
+  {key:'entertainment',label:'90s Pop Culture 😎',icon:'📺',cat:'Entertainment'},
+  {key:'tech',label:'Web Dev Basics 🖥️',icon:'💻',cat:'Technology'},
+  {key:'geography',label:'World Capitals 🌐',icon:'🌍',cat:'Geography'},
+  {key:'mixed',label:'Mixed Bag 🤔',icon:'❓',cat:'Random'},
+];
+function openSearch(){
+  document.getElementById('search-overlay').classList.add('open');
+  document.getElementById('search-input').value='';
+  renderSearch('');
+  setTimeout(()=>document.getElementById('search-input').focus(),150);
+}
+function closeSearch(){document.getElementById('search-overlay').classList.remove('open')}
+function renderSearch(q){
+  const res=document.getElementById('search-results');
+  const filtered=ALL_QUIZZES_LIST.filter(x=>!q||x.label.toLowerCase().includes(q.toLowerCase())||x.cat.toLowerCase().includes(q.toLowerCase()));
+  if(!filtered.length){res.innerHTML='<div class="search-no-results">No quizzes found 😅</div>';return;}
+  res.innerHTML=filtered.map(x=>`<div class="search-result-item" onclick="closeSearch();startQuiz('${x.key}')">${x.icon} <span style="flex:1">${x.label}</span><span style="font-size:11px;color:var(--muted)">${x.cat}</span></div>`).join('');
+}
+
+/* ── CREATE QUIZ ── */
+let createQCount=0;
+let myQuizzes=[];
+function openCreateQuiz(){
+  createQCount=0;
+  document.getElementById('cq-title').value='';
+  document.getElementById('cq-questions').innerHTML='';
+  addCreateQuestion();
+  document.getElementById('create-overlay').classList.add('open');
+}
+function closeCreateQuiz(){document.getElementById('create-overlay').classList.remove('open')}
+function addCreateQuestion(){
+  createQCount++;
+  const id='cqq'+createQCount;
+  const div=document.createElement('div');
+  div.className='q-item';div.id=id;
+  div.innerHTML=`
+    <div class="q-item-header">
+      <span class="q-num-badge">QUESTION ${createQCount}</span>
+      <button class="q-remove" onclick="removeQuestion('${id}')" title="Remove">✕</button>
+    </div>
+    <input class="form-input" style="margin-bottom:10px" type="text" placeholder="Question text…" />
+    <div>
+      ${[0,1,2,3].map(i=>`<div class="opt-input-row"><input type="radio" name="${id}-ans" value="${i}" class="opt-radio"/><input class="opt-input" type="text" placeholder="Option ${String.fromCharCode(65+i)}"/></div>`).join('')}
+    </div>
+    <div class="create-hint">Select the radio button next to the correct answer</div>`;
+  document.getElementById('cq-questions').appendChild(div);
+}
+function removeQuestion(id){
+  const el=document.getElementById(id);
+  if(document.querySelectorAll('.q-item').length<=1){alert('Quiz must have at least 1 question.');return;}
+  el.remove();
+}
+function publishQuiz(){
+  const title=document.getElementById('cq-title').value.trim();
+  if(!title){alert('Please enter a quiz title.');return;}
+  const qItems=document.querySelectorAll('.q-item');
+  const questions=[];
+  let valid=true;
+  qItems.forEach(item=>{
+    const qText=item.querySelector('input[type="text"]').value.trim();
+    const opts=Array.from(item.querySelectorAll('.opt-input')).map(i=>i.value.trim());
+    const radios=item.querySelectorAll('input[type="radio"]');
+    let ans=-1;
+    radios.forEach((r,i)=>{if(r.checked)ans=i});
+    if(!qText||opts.some(o=>!o)||ans===-1){valid=false;}
+    questions.push({q:qText,opts,ans});
+  });
+  if(!valid){alert('Please fill in all questions, options, and select a correct answer for each.');return;}
+  const key='custom_'+Date.now();
+  QUIZZES[key]={title,questions};
+  myQuizzes.push({key,title,count:questions.length});
+  closeCreateQuiz();
+  // Show a tiny success toast then start it
+  const toast=document.createElement('div');
+  toast.style.cssText='position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;padding:14px 28px;border-radius:50px;font-weight:700;font-size:15px;z-index:9999;box-shadow:0 8px 30px rgba(34,197,94,.4)';
+  toast.textContent='🎉 Quiz published! Starting now…';
+  document.body.appendChild(toast);
+  setTimeout(()=>{toast.remove();startQuiz(key);},1600);
+}
+
+/* ── LEADERBOARD ── */
+const LB_DATA=[
+  {rank:'🥇',name:'QuizMaster3000',score:'4850 pts'},
+  {rank:'🥈',name:'BrainiacBex',score:'4420 pts'},
+  {rank:'🥉',name:'TriviaTitan',score:'3990 pts'},
+  {rank:'4',name:'NerdAlert',score:'3750 pts'},
+  {rank:'5',name:'SmartCookie',score:'3200 pts'},
+  {rank:'6',name:'FactsFanatic',score:'2980 pts'},
+  {rank:'7',name:'GeniusJamie',score:'2650 pts'},
+];
+function openLeaderboard(){
+  const list=document.getElementById('lb-list');
+  list.innerHTML=LB_DATA.map(r=>`<div class="lb-row"><span class="lb-rank">${r.rank}</span><span class="lb-name">${r.name}</span><span class="lb-score">${r.score}</span></div>`).join('');
+  document.getElementById('lb-overlay').classList.add('open');
+}
+
+/* ── MY QUIZZES ── */
+function openMyQuizzes(){
+  const list=document.getElementById('myq-list');
+  if(myQuizzes.length===0){
+    list.innerHTML='<div style="color:var(--muted);font-size:14px;text-align:center;padding:24px 0">You haven\'t created any quizzes yet!<br><br>Hit <strong>Create New</strong> to get started.</div>';
+  } else {
+    list.innerHTML=myQuizzes.map(q=>`<div class="my-quiz-row"><div><div class="my-quiz-name">${q.title}</div><div class="my-quiz-meta">${q.count} questions</div></div><button class="modal-btn primary" style="padding:8px 16px;font-size:13px" onclick="closeModal('myq-overlay');startQuiz('${q.key}')">▶ Play</button></div>`).join('');
+  }
+  document.getElementById('myq-overlay').classList.add('open');
+}
+
+/* ── CATEGORIES ── */
+function openCategories(){document.getElementById('cat-overlay').classList.add('open');}
+</script>
+</body>
+</html>
