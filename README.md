@@ -1,27 +1,110 @@
-## CodSoft
-# Task 1
-Personal Portfolio Website
-A basic yet creative HTML and CSS project designed to practice layout structuring, section division, alignment, and styling. This task enhances design sense while building a visually appealing and user-friendly landing page.
+# CodSoft Internship Projects
 
-🔗 View Project: https://jiya17batra.github.io/CODSOFT/Task1/index.html
-# Task 2
-Calculator Web App
-An interactive calculator built using HTML, CSS, and JavaScript that performs basic arithmetic operations with a clean and responsive design.
-It includes a Dark/Light mode toggle, fun Gen-Z style code comments, and a playful sound effect on the "=" button for a more engaging user experience.
+A collection of projects completed during my **Web Development Internship at CodSoft**, showcasing skills in **frontend development, JavaScript, React, UI engineering, and product design**.
 
-🔗 View Project: https://jiya17batra.github.io/CODSOFT/Task2/index.html
-# Task 3
-Job Board Web Application
-A full-stack job portal built using React, Node.js, and MongoDB where employers can post jobs and candidates can search and apply with resume upload. It features secure authentication, dashboards for both roles, search functionality, email notifications, and a fully responsive modern UI.
+These projects helped strengthen my understanding of responsive web development, component-based architecture, interactivity, and user-centric design.
 
-🔗 View Project: https://jiya17batra.github.io/CODSOFT/Task3/index.html
-# Task 4
-Online Quiz Maker Platform
-An interactive platform that allows users to create quizzes with multiple-choice questions and lets others attempt them with instant score feedback. It includes quiz listing, one-by-one question display, user authentication, and mobile-responsive design for seamless usage across devices.
+---
 
-🔗 View Project: https://jiya17batra.github.io/CODSOFT/Task4/index.html
-# Task 5
-E-Commerce Website
-A full-stack e-commerce platform built using React, Node.js, and MongoDB where users can browse products, filter items, add to cart, and complete secure checkout. It includes user authentication, dynamic product management, shopping cart functionality, and payment integration with a fully responsive modern design.
+## 🛠 Tech Stack
 
-🔗 View Project: https://jiya17batra.github.io/CODSOFT/Task5/index.html
+* **Frontend:** HTML, CSS, JavaScript, React
+* **Backend (Project Prototypes):** Node.js, MongoDB
+* **Deployment:** GitHub Pages
+
+---
+
+# Project 1 — Personal Portfolio Website
+
+A responsive portfolio website built to practice layout structuring, visual hierarchy, section organization, and modern UI styling.
+
+### Key Features
+
+* Responsive design
+* Structured multi-section layout
+* Clean navigation flow
+* User-friendly interface
+
+🔗 **Live Demo:** https://jiya17batra.github.io/CODSOFT/Task1/index.html
+
+---
+
+# Project 2 — Calculator Web App
+
+An interactive calculator built using HTML, CSS, and JavaScript for performing arithmetic operations with an engaging UI.
+
+### Key Features
+
+* Basic arithmetic operations
+* Responsive interface
+* Dark/Light mode toggle
+* Interactive sound effects
+* Enhanced UX with playful UI interactions
+
+🔗 **Live Demo:** https://jiya17batra.github.io/CODSOFT/Task2/index.html
+
+---
+
+# Project 3 — Job Board Application
+
+A job portal prototype designed for employers and candidates to manage job postings and applications.
+
+### Key Features
+
+* Job posting and search workflow
+* Resume upload interface
+* Role-based dashboards
+* Authentication workflow
+* Responsive UI design
+
+**Planned / Prototype Stack:** React, Node.js, MongoDB
+
+🔗 **Live Demo:** https://jiya17batra.github.io/CODSOFT/Task3/index.html
+
+---
+
+# Project 4 — Online Quiz Maker Platform
+
+An interactive platform for creating and attempting quizzes with real-time score feedback.
+
+### Key Features
+
+* Quiz creation workflow
+* Multiple-choice question system
+* Instant scoring
+* User authentication flow
+* Mobile-responsive design
+
+🔗 **Live Demo:** https://jiya17batra.github.io/CODSOFT/Task4/index.html
+
+---
+
+# Project 5 — E-Commerce Platform
+
+An e-commerce platform prototype focused on product browsing and shopping workflow simulation.
+
+### Key Features
+
+* Product listing and filtering
+* Shopping cart workflow
+* Checkout interface
+* Authentication flow
+* Responsive product UI
+
+**Planned / Prototype Stack:** React, Node.js, MongoDB
+
+🔗 **Live Demo:** https://jiya17batra.github.io/CODSOFT/Task5/index.html
+
+---
+
+## 🎯 Internship Outcome
+
+Through these projects, I gained hands-on experience in:
+
+* Frontend Development
+* Responsive UI Engineering
+* JavaScript Application Logic
+* React-Based Development
+* Product Thinking & UX
+
+This internship strengthened my ability to build scalable, interactive, and user-focused web applications.
